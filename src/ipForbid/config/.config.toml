@@ -1,0 +1,9 @@
+[app]
+# 禁止的项目名称英文逗号连接
+deny_files = "tongwz,tongwz2"
+
+[tongwz]
+nginx_logs_dir = "xxxx"
+nginx_deny_conf_dir = "yyyy"
+
+
