@@ -1,6 +1,7 @@
 package crontab
 
 import (
+	"ipForbid/business"
 	"ipForbid/consts"
 	"ipForbid/pkg/logrus"
 	"time"
@@ -42,5 +43,17 @@ func (cto *IpForbidTimer) Run() {
 	defer cto.setRunningStatus(false)
 
 	// 运行逻辑
+	// 读取需要进行封禁Ip的项目名称，通过项目名称找到日志位置和
+	serviceMap := business.GetAllService()
+	if serviceMap == nil {
+		return
+	}
+	// 通过每个service拿到它的日志相关配置 和 读取逻辑 异步进行
+	for _, serInfo := range serviceMap {
+		if len(serInfo) == 0 {
+			continue
+		}
+
+	}
 	// fmt.Printf("我们执行的文件名是：%s 当前时间是：%s \n", middleFile, time.Now().Format(utils.TimeFormatLocal))
 }

@@ -1,9 +1,22 @@
 [app]
+# ip封禁解放时间 60 天
+liberate_time = 60
 # 禁止的项目名称英文逗号连接
-deny_files = "tongwz,tongwz2"
+deny_service = ["tongwz", "tongwz2"]
 
+#cdn服务商相关ip要进行过滤
+[cdn]
+cloudflare = "www.xxx.com"
+quic = "www.xxx.com"
+
+# 需要屏蔽的网站名称
 [tongwz]
 nginx_logs_dir = "xxxx"
 nginx_deny_conf_dir = "yyyy"
+start_line_index = 0
 
-
+#... 后续有多少个就加多少配置
+[tongwz2]
+nginx_logs_dir = "xxxx"
+nginx_deny_conf_dir = "yyyy"
+start_line_index = 0
