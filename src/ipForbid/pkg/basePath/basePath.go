@@ -10,7 +10,7 @@ var BasePath = myBasePath()
 func myBasePath() string {
 	var path string
 	var ok bool
-	if path, ok = os.LookupEnv("INFO_MINER"); ok {
+	if path, ok = os.LookupEnv("IP_FORBID"); ok {
 		return path
 	}
 
