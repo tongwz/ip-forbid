@@ -1,3 +1,4 @@
 .idea
 src/ipForbid/logs/*.log
 src/ipForbid/config/config.toml
+src/ipForbid/ipForbid

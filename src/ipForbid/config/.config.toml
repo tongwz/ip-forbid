@@ -1,21 +1,30 @@
 [app]
-# ip封禁解放时间 60 天
+# ip封禁解放时间 60 小时
 liberate_time = 60
 # 禁止的项目名称英文逗号连接
-deny_service = ["tongwz", "tongwz2"]
+deny_service = ["tongwz"]
+# 本服务的公网IP地址
+ip = "127.0.0.1"
 
-#cdn服务商相关ip要进行过滤
+# 按照时间范围内错误触发条数
+one_min_error_num = 2
+ten_min_error_num = 50
+
+[robot]
+urls = ["xxxx"]
+
+# cdn服务商相关ip要进行过滤
 [cdn]
 cloudflare = "www.xxx.com"
 quic = "www.xxx.com"
 
 # 需要屏蔽的网站名称
 [tongwz]
-nginx_logs_dir = "xxxx"
-nginx_deny_conf_dir = "yyyy"
+nginx_logs_dir = "/var/log/wordpress.error.log"
+nginx_deny_conf_dir = "/etc/nginx/conf.d/tongwz_block.conf"
 start_line_index = 0
 
-#... 后续有多少个就加多少配置
+# ... 后续有多少个就加多少配置
 [tongwz2]
 nginx_logs_dir = "xxxx"
 nginx_deny_conf_dir = "yyyy"

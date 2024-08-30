@@ -1,10 +1,10 @@
 package req
 
 type RobotMsg struct {
-	Msgtype string       `json:"msgtype"`
-	Text    RobotContent `json:"text"`
+	Msgtype string       `json:"msg_type"`
+	Content RobotContent `json:"content"`
 }
 
 type RobotContent struct {
-	Content string `json:"content"`
+	Text string `json:"text"`
 }

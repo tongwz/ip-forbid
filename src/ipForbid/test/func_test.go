@@ -3,30 +3,16 @@ package test
 import (
 	"ipForbid/business"
 	"ipForbid/pkg/logrus"
-	"ipForbid/utils"
 	"testing"
 )
-
-// 2024年8月29日17:28:43 测试查询自身服务器ip 这个方法弃用
-// go test -v -run TestSelfIp test/func_test.go -count=1
-func TestSelfIp(t *testing.T) {
-	logrus.InitLog()
-	resp, err := utils.SelfIp()
-
-	if err != nil {
-		t.Logf("获取返回信息异常：%v", err)
-		return
-	}
-	t.Logf("获取结果是：%s", resp)
-}
 
 // 测试读取nginx的静止文件
 // go test -v -run TestBlockNginxFile test/func_test.go -count=1
 func TestBlockNginxFile(t *testing.T) {
 	logrus.InitLog()
-	business.BlockNginxFile("/etc/nginx/conf.d/tongwz_block.conf")
+	denyIpList := business.BlockNginxFile("/etc/nginx/conf.d/tongwz_block.conf")
 
-	t.Logf("获取结果是：%s", "结束")
+	t.Logf("获取结果是：%#v", denyIpList)
 }
 
 // GetAllService
@@ -36,4 +22,13 @@ func TestAllService(t *testing.T) {
 	allService := business.GetAllService()
 
 	t.Logf("获取结果是：%+v", allService)
+}
+
+// go test -v -run TestTriggerString test/func_test.go -count=1
+func TestTriggerString(t *testing.T) {
+	logrus.InitLog()
+	logStr := `2024/08/29 17:52:23 [error] 9851#9851: *412 FastCGI sent in stderr: "Primary script unknown" while reading response header from upstream, client: 192.168.56.1, server: www.tongwz.com, request: "GET /cccc/cccc.php HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "www.tongwz.com"`
+	isTrigger, triggerTime, ip, request := business.MatchTriggerIp(logStr)
+
+	t.Logf("获取结果是：%+v, %+v,%+v,%+v", isTrigger, triggerTime, ip, request)
 }
