@@ -59,7 +59,7 @@ func (cto *IpForbidTimer) Run() {
 			continue
 		}
 		waitG.Add(1)
-		go business.ServiceErrorWatch(serviceName, serInfo, &waitG)
+		go business.GetIpForbidBusObj().ServiceErrorWatch(serviceName, serInfo, &waitG)
 	}
 	waitG.Wait()
 	fmt.Printf("我们执行任务完成:开始时间：%s 当前时间是：%s \n", startTime.Format(consts.TimeYmdHis), time.Now().Format(consts.TimeYmdHis))

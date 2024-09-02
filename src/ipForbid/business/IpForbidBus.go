@@ -302,6 +302,7 @@ func ReadNginxLog(startLineIndex int, nginxFilePath string, blockMap map[string]
 		logrus.LogrusObj.Errorf("读取文件失败：%s", err.Error())
 		return nil, 0
 	}
+
 	// 创建一个带缓冲的读取器
 	reader := bufio.NewReader(file)
 	// 我们的读取index 如果>500行 我们都要 -200 以免漏了之前时间访问的数据
