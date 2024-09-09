@@ -20,9 +20,10 @@ quic = "www.xxx.com"
 
 # 需要屏蔽的网站名称
 [tongwz]
+nginx_deny_conf_dir = '/etc/nginx/conf.d/block/tongwz_block.conf'
 nginx_logs_dir = "/var/log/wordpress.error.log"
-nginx_deny_conf_dir = "/etc/nginx/conf.d/tongwz_block.conf"
 start_line_index = 0
+start_size_index = 0
 
 # ... 后续有多少个就加多少配置
 [tongwz2]

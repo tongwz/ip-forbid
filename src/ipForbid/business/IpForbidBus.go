@@ -22,16 +22,23 @@ var IpForbidBusObj *IpForbidBus
 var IpForbidBusOnce sync.Once
 
 type IpForbidBus struct {
-	CloudflareIps []string // 它的ip是带子网掩码的
-	QuicIps       []string // 它是纯ip
+	mtx           *sync.Mutex
+	CloudflareIps []string                 // 它的ip是带子网掩码的
+	QuicIps       []string                 // 它是纯ip
+	forbidMaps    map[string]map[int64]int // 第一个key IP 第二个key 分钟的整型 value=一分钟触发次数
 }
 
 // 单独实例化一次
 func GetIpForbidBusObj() *IpForbidBus {
 	IpForbidBusOnce.Do(func() {
 		IpForbidBusObj = &IpForbidBus{}
+		IpForbidBusObj.mtx = &sync.Mutex{}
 		IpForbidBusObj.CloudflareIps = CloudFlareListGet()
 		IpForbidBusObj.QuicIps = QuicListGet()
+		IpForbidBusObj.forbidMaps = make(map[string]map[int64]int)
+
+		// 加一个定时任务，定时刷新最新cdn ips
+		go IpForbidBusObj.refreshCDNIps()
 	})
 	return IpForbidBusObj
 }
@@ -53,6 +60,29 @@ func GetAllService() map[string]map[string]string {
 	}
 	return serviceMap
 
+}
+
+// 获取单个service的map
+func GetService(key string) map[string]string {
+	return viper.Viper.GetStringMapString(key)
+}
+
+// 2024年9月9日17:47:23 加入ips更新心跳
+func (i *IpForbidBus) refreshCDNIps() {
+	timer := time.NewTicker(20 * time.Minute)
+	for {
+		select {
+		case <-timer.C:
+			cloudFlareIps := CloudFlareListGet()
+			if len(cloudFlareIps) > 0 {
+				IpForbidBusObj.CloudflareIps = cloudFlareIps
+			}
+			quicIps := QuicListGet()
+			if len(quicIps) > 0 {
+				IpForbidBusObj.QuicIps = quicIps
+			}
+		}
+	}
 }
 
 // nginx_logs_dir = "xxxx"
@@ -183,7 +213,10 @@ func (i *IpForbidBus) ServiceErrorWatch(serviceName string, serviceMap map[strin
 	}
 }
 
+// 2024年9月9日16:31:58 是否是供应商的ip
 func (i *IpForbidBus) IsIpInCDN(ip string) bool {
+	i.mtx.Lock()
+	defer i.mtx.Unlock()
 	// 供应商1
 	isIn, err := utils.IsIpInSlice(ip, i.CloudflareIps)
 	if isIn {
