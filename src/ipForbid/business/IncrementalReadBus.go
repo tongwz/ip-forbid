@@ -212,6 +212,8 @@ func (i *IpForbidBus) IncrementalReading(startSizeIndex int64, nginxFilePath str
 		time.Sleep(time.Second)
 		return realStartSize
 	}
+	// 本机ip的 客户端也忽略
+	localIp := GetLocalHostIp()
 
 	if newStat.Size() > realStartSize {
 		// 文件大小增加了，移动文件指针到上次的位置之后
@@ -224,7 +226,7 @@ func (i *IpForbidBus) IncrementalReading(startSizeIndex int64, nginxFilePath str
 		// 逐行读取新的内容
 		for scanner.Scan() {
 			line := scanner.Text()
-			fmt.Println("New content:", line)
+			// fmt.Println("New content:", line)
 
 			isTrigger, triggerTime, ip, _ := MatchTriggerIp(line)
 			// 不是我们的异常情况
@@ -233,6 +235,10 @@ func (i *IpForbidBus) IncrementalReading(startSizeIndex int64, nginxFilePath str
 			}
 			// 已经在禁止名单里的 不进入黑名单
 			if _, ok := blockMap[ip]; ok {
+				continue
+			}
+			// 忽略本机ip的客户端以免出现访问异常
+			if ip == localIp {
 				continue
 			}
 			// 异常情况 我们统计异常数据

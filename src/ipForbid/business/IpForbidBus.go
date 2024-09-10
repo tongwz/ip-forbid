@@ -67,6 +67,11 @@ func GetService(key string) map[string]string {
 	return viper.Viper.GetStringMapString(key)
 }
 
+// 2024年9月10日09:52:46 获取本机IP
+func GetLocalHostIp() string {
+	return viper.Viper.GetString("app.ip")
+}
+
 // 2024年9月9日17:47:23 加入ips更新心跳
 func (i *IpForbidBus) refreshCDNIps() {
 	timer := time.NewTicker(20 * time.Minute)
